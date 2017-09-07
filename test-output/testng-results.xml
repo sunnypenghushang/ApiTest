@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" ignored="3" total="5" passed="2">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="57" started-at="2017-09-06T11:30:00Z" finished-at="2017-09-06T11:30:00Z">
+    <groups>
+    </groups>
+    <test name="Default test" duration-ms="57" started-at="2017-09-06T11:30:00Z" finished-at="2017-09-06T11:30:00Z">
+      <class name="com.icarbonx.testcase.test">
+        <test-method status="PASS" signature="getNutritional()[pri:0, instance:com.icarbonx.testcase.test@7f9a81e8]" name="getNutritional" duration-ms="39" started-at="2017-09-06T19:30:00Z" finished-at="2017-09-06T19:30:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getNutritional -->
+        <test-method status="PASS" signature="getSearchResult()[pri:0, instance:com.icarbonx.testcase.test@7f9a81e8]" name="getSearchResult" duration-ms="1" started-at="2017-09-06T19:30:00Z" finished-at="2017-09-06T19:30:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getSearchResult -->
+      </class> <!-- com.icarbonx.testcase.test -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>
