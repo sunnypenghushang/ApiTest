@@ -8,19 +8,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -61,6 +55,9 @@ public class ExcelSheet {
 		}
 
 	}
+	
+	
+
 
 	/*
 	 * 获取单元格的值
@@ -196,9 +193,6 @@ public class ExcelSheet {
 	 * 
 	 * @param writevalue 要写入的字符串
 	 */
-
-	
-	
 	public static void writeList(List<String> list,int sheetindex,int rankindex,String finalXlsxPath )
 	{
 		OutputStream out=null;
@@ -245,10 +239,45 @@ public class ExcelSheet {
 	}
 	
 	
+	public static void writeSigleDate(String data,String finalXlsxPath,int sheetindex,int rowindex,int rankindex)
+	{
+		OutputStream out=null;
+		try{
+		 // 读取Excel文档  
+        File finalXlsxFile = new File(finalXlsxPath);  
+        Workbook workBook = getWorkBook(finalXlsxFile);  
+        Sheet sheet=workBook.getSheetAt(sheetindex);
+        Row row=sheet.getRow(rowindex);
+        Cell cell=row.createCell(rankindex);
+        cell.setCellValue(data);
+        //创建文件输出流，否则不生效
+        out=new FileOutputStream(finalXlsxFile);
+        workBook.write(out);
+        
+        
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally{
+			try {
+				if(out!=null)
+				{
+					out.flush();
+					out.close();
+				}
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+	}
+	
 	public static void writeListMap(List<List> list,int sheetindex,int rankindex,String finalXlsxPath)
 	{
-		
-		
+
 		OutputStream out=null;
 		try{
 			//读取excel文档，要写入先读取
@@ -386,20 +415,8 @@ public class ExcelSheet {
 	}
 
 	public static void main(String args[]) {
-		List list1 = new ArrayList<>();
-		List list2= new ArrayList<>();
-		List list= new ArrayList<List>();
-		list.add("第一行");
-		list.add("1");
-		list.add("1");
+		writeSigleDate("测试棒棒地柘城基", "F://food.xls", 0,1,2);
 		
-		list.add("第二行");
-		list.add("2");
-		list.add("2");
-		
-		list.add(list1);
-		list.add(list2);
-		writeListMap(list, 0, 1, "F://food.xlsx");
  
 	}
 

@@ -5,8 +5,7 @@
     <classes>
       <class name="com.icarbonx.testcase.test">
         <methods>
-          <include name="getNutritional"/>
-          <include name="getSearchResult"/>
+          <include name="analysisExcel"/>
         </methods>
       </class> <!-- com.icarbonx.testcase.test -->
     </classes>

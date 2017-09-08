@@ -10,8 +10,6 @@ import org.testng.annotations.Test;
 import com.icarbonx.api.HttpRequest;
 import com.icarbonx.api.createFood;
 import com.icarbonx.api.foodUtil;
-import com.icarbonx.uitls.ExcelDemo;
-import com.icarbonx.uitls.ExcelInfo;
 import com.icarbonx.uitls.ExcelSheet;
 
 /*
@@ -20,9 +18,8 @@ import com.icarbonx.uitls.ExcelSheet;
 public class test {
 	String analyUrl="http://123.59.140.18/oramirror_cloud/api/analysisData.do";
 	String param="app_key=xN12cQL0a6Ui2Aw1az1J&name=";
-   
 	//语音输入4种食物组合
-    @Test
+    @Test(enabled=false)
     public void analysisData(){
     	String message=null;
     	String[] friut,drink,meat,stap,veg;
@@ -40,55 +37,63 @@ public class test {
     					{
     						message="我今天吃了一个"+friut[k]+"100克"+meat[j]+"一杯"+
     					    drink[i]+"200克"+veg[n]+"150克"+stap[m];
-    						System.out.println(message);
-    						foodUtil.printFoodresult(message,"");		
+    						List<String> list=foodUtil.getFoodSearchResultList(message);
+    						System.out.println(message+" 搜索结果：");
+    						for(String str:list)
+    						{  
+    							System.out.println(str);
+    						}
+    						
+    						
     					}
 
     }
     
     
-    //遍历excel中的食物vvv
+   /*
+    * 获取所有食物的份量
+    */
     @Test(dataProvider="weightprovider",enabled=false)
-    public void analysisExcel(String weight)
+    public void analysisExcel(String weight,int index)
     {   
-    	System.out.println("****************************");
-    	System.out.println("份量为:"+weight);
     	//获取文件中的第一张表格
-    	ArrayList<ExcelInfo> foodlist=(ArrayList<ExcelInfo>) ExcelDemo.importExcel("F://food.xls", 0);
-    	Iterator<ExcelInfo> iterator=foodlist.iterator();
+    	List<String> foodlist=ExcelSheet.getrankvalue("F://food.xls", 0, 0);
+    	List<String> weightlist=new ArrayList<>();
+    	Iterator<String> iterator=foodlist.iterator();
+    	//搜索结果放在List中
+    	ExcelSheet.writeSigleDate(weight, "F://food.xls", 0, 0, index);
     	while(iterator.hasNext())
-    	{   
-    		String food,message;
-    		ExcelInfo rowfood=iterator.next();
-    		food=rowfood.getfood();
-    		//System.out.println("搜索的食物为:"+food);
-			foodUtil.printFoodresult(food,weight);	
-    		
-
-    		
+    	{  
+    	   String food=iterator.next();
+			String response=foodUtil.getFoodSearchBodyStr(weight+food);
+			String w=foodUtil.getFoodWeight(response);
+			weightlist.add(w);
+			//食物份量写入EXCEL表格中,先写表头
+	    	ExcelSheet.writeList(weightlist, 0, index, "F://food.xls");
     	}
-    	
+	
     }
+    
     
     @DataProvider(name = "weightprovider")
     public Object[][] dataprovide(){
         return new Object[][]{
-                       {"一勺"},
-                       {"一碗"},
-                       {"一个"},
-                       {"一块"},
-                       {"一份"},
-                       {"一点"},
-                       {"一口"},
-                       {"一些"},
-                       {"一杯"},
-                       {"一根"},
-                       {"一片"},
-                       {"一盘"},
-                       {"一碟"},
-                       {"一粒"},
-                       {"一顿"},
-                       {"一道"}   
+                       {"一勺",1},
+                       {"一碗",2},
+                       {"一个",3},
+                       {"一块",4},
+                       {"一份",5},
+                       {"一点",6},
+                       {"一口",7},
+                       {"一些",8},
+                       {"一杯",9},
+                       {"一根",10},
+                       {"一片",11},
+                       {"一盘",12},
+                       {"一碟",13},
+                       {"一粒",14},
+                       {"一顿",15},
+                       {"一道",16}   
                        };
                              
     }                       
@@ -122,7 +127,7 @@ public class test {
            String str="[{ \"weight\": 100, \"id\":"+id+"}]";
            
            //获得到的请求结果
-           String jsonresult=HttpRequest.doPost(jsonurl, str).toString();
+           String jsonresult=HttpRequest.doPostJson(jsonurl, str).toString();
            nutritiona.add(jsonresult);
            ExcelSheet.writeList(nutritiona, 0, 2, "F://food.xls");
           
@@ -151,11 +156,11 @@ public class test {
     	{
     	
     		String foodsigle=foodlist.get(i);
-    		String textresult=analysistext.postRequestContent("name=我中午吃了100克"+foodsigle);
+    		String textresult=analysistext.postRequestContent("name=我中午吃了100克鸡蛋西瓜"+foodsigle);
     	
  
     	    //搜索到的食物名称
-        	String searchname=foodUtil.getResponseFood(textresult);
+        	String searchname=foodUtil.getFoodNameStr(textresult);
             //搜索到的食物名称放入excel表
         	searchresult.add(searchname);
         	ExcelSheet.writeList(searchresult, 0, 1, "F://food.xls");
@@ -164,20 +169,15 @@ public class test {
     	
     	
     }
-    //长句子测试
-    @Test(enabled=false)
-    public void longAnaly()
-    {
-    	foodUtil.printFoodresult("我今天苹果、桃子、梨各吃了一个  ","");	
-    	
-    }
+
+    
+    
     
     public static void main(String args[])
     {
-    	ExcelSheet food=new ExcelSheet("F://food.xls", 0);
-    	System.out.println(food.getsigdata(2,1));
-    //	food.write(1, 1, "西瓜");
-    	
+		String response=foodUtil.getFoodSearchBodyStr("100克鸡蛋");
+		String w=foodUtil.getFoodWeight(response);
+		System.out.println("份量为"+w);
     	
     }
 
