@@ -8,14 +8,19 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -117,40 +122,40 @@ public class ExcelSheet {
 		Sheet sheet = null;
 		ArrayList<String> rankvalues = new ArrayList<String>();
 		File file = new File(filepath);
-		FileInputStream fi=null;
 		
 		try {
-			
-			
-			fi = new FileInputStream(file);
+		
 
-			if (filepath.endsWith(".xls")) {
-				workbook = new HSSFWorkbook(fi);
-
-			} else if (filepath.endsWith(".xlsx")) {
-				workbook = new XSSFWorkbook(fi);
-			} else
-				System.out.println("不是excel文件！");
+		    workbook=getWorkBook(file);
 			
-			sheet = (Sheet) workbook.getSheetAt(numberSheet);
+			sheet = workbook.getSheetAt(numberSheet);
+			
 
 			Iterator<Row> rowiterator = sheet.rowIterator();
+			rowiterator.next();
 			while (rowiterator.hasNext()) {
 				Row row = rowiterator.next();
 				Cell cell = row.getCell(rankindex);
 
 				String value = getValue(cell);
-				System.out.println("单元格的值:" + value);
-
 				rankvalues.add(value);
-				fi.close();
-				
-				workbook.close();
+			
 
 		} 
 		}catch (Exception e) {
 
 			e.printStackTrace();
+		}
+		finally {
+			try {
+				
+				workbook.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
 		}
 		
 
@@ -192,101 +197,132 @@ public class ExcelSheet {
 	 * @param writevalue 要写入的字符串
 	 */
 
-	public static void write(String filepath, int numberSheet, int rowindex, int rankindex, String writevalue) {
-
-		Workbook workbook = null;
-		Sheet sheet;
-		OutputStream out = null;
-
-		try {
-			out = new FileOutputStream(filepath);
-			if (filepath.endsWith(".xls"))
-				workbook = new HSSFWorkbook();
-			else if (filepath.endsWith(".xlsx"))
-				workbook = new XSSFWorkbook();
-			else
-				System.out.println("不是excel文件！");
-			sheet = workbook.getSheetAt(numberSheet);
-			Row row = sheet.getRow(rowindex);
-			Cell cell = row.getCell(rankindex);
-			cell.setCellValue(writevalue);
-
-			workbook.write(out);
-			out.flush();
-			out.close();
-
-		} catch (IOException e) {
-
+	
+	
+	public static void writeList(List<String> list,int sheetindex,int rankindex,String finalXlsxPath )
+	{
+		OutputStream out=null;
+		try{
+		 // 读取Excel文档  
+        File finalXlsxFile = new File(finalXlsxPath);  
+        Workbook workBook = getWorkBook(finalXlsxFile);  
+        Sheet sheet=workBook.getSheetAt(sheetindex);
+        
+    
+        
+        //写数据
+        for(int i=0;i<list.size();i++)
+        {
+        	//Row row=sheet.createRow(i+1);
+        	Row row=sheet.getRow(i+1);
+        	String value=list.get(i);
+        	Cell cell=row.createCell(rankindex);
+        	cell.setCellValue(value);
+        }
+        //创建文件输出流，否则不生效
+        out=new FileOutputStream(finalXlsxFile);
+        workBook.write(out);
+        
+		}
+		catch(Exception e)
+		{
 			e.printStackTrace();
-		} finally {
+		}
+		finally{
 			try {
-				workbook.close();
+				if(out!=null)
+				{
+					out.flush();
+					out.close();
+				}
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		}
-
 	}
-
-	public static void writeList(String filepath, int sheetindex, int rankindex, List<String> list) {
-		String value = null;
-		Workbook workbook = null;
-		Sheet sheet;
-		OutputStream out = null;
-
-		try {
-			out = new FileOutputStream(filepath);
-			File f = new File(filepath);
-			if (f.exists()) {
-				if (filepath.endsWith(".xls")) {
-					workbook = new HSSFWorkbook();
-
-				} else if (filepath.endsWith(".xlsx")) {
-					workbook = new XSSFWorkbook();
-
-				} else
-					System.out.println("不是excel文件！");
-
-				sheet = workbook.getSheetAt(sheetindex);
-
-				for (int i = 0; i < list.size(); i++) {
-					value = list.get(i);
-					Row row = sheet.getRow(i + 1);
-					Cell cell = row.getCell(rankindex);
-					cell.setCellValue(value);
-					out = new FileOutputStream(filepath);
-					workbook.write(out);
-
+	
+	
+	public static void writeListMap(List<List> list,int sheetindex,int rankindex,String finalXlsxPath)
+	{
+		
+		
+		OutputStream out=null;
+		try{
+			//读取excel文档，要写入先读取
+			File f=new File(finalXlsxPath);
+			Workbook workbook=getWorkBook(f);
+			//获取工作表
+			Sheet sheet=workbook.getSheetAt(sheetindex);
+			//往excel中写数据
+			for(int i=0;i<list.size();i++)
+			{
+				int rowstart=rankindex;
+				//创建行
+				Row row=sheet.createRow(i+1);
+				//得到要插入的每一条记录
+				List<String> sonlist=list.get(i);
+				//在一行内循环
+				for(int j=0;i<sonlist.size();j++)
+				{   
+					String sonvalue=sonlist.get(j);
+					Cell cell=row.createCell(rowstart);
+					cell.setCellValue(sonvalue);
+					rowstart++;
 				}
-				out.flush();
-				out.close();
-				workbook.close();
-
-			} else {
-				workbook = new HSSFWorkbook();
-				sheet = workbook.createSheet("test");
-
-				for (int i = 0; i < list.size(); i++) {
-					value = list.get(i);
-					Row row = sheet.createRow(i + 1);
-					Cell cell = row.createCell(rankindex);
-					cell.setCellValue(value);
-					out = new FileOutputStream(filepath);
-					workbook.write(out);
-
-				}
-				out.flush();
-				out.close();
-				workbook.close();
 			}
-
-		} catch (IOException e) {
-
+			
+			//创建文件输出流
+			out=new FileOutputStream(f);
+			workbook.write(out);
+		}
+		
+		catch(Exception e)
+		{
 			e.printStackTrace();
 		}
-
+		finally {
+			if(out!=null)
+			{
+				try {
+					out.flush();
+					out.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+			}
+				
+		}
+		
+		
+		
 	}
+	
+	
+	
+	public static Workbook getWorkBook(File f)
+	{   
+		 Workbook wb = null;  
+		 try{
+	        FileInputStream in = new FileInputStream(f);  
+	        if(f.getName().endsWith("xls")){  //Excel 2003  
+	            wb = new HSSFWorkbook(in);  
+	        }else if(f.getName().endsWith("xlsx")){  // Excel 2007/2010  
+	            wb = new XSSFWorkbook(in);  
+	        }  
+		 }
+	 catch (Exception e) {
+			// TODO: handle exception
+		 e.printStackTrace();
+		}
+		
+		return wb;
+	}
+	
 
 	/**
 	 * 获取行数
@@ -350,11 +386,21 @@ public class ExcelSheet {
 	}
 
 	public static void main(String args[]) {
-		List list = new ArrayList<String>();
+		List list1 = new ArrayList<>();
+		List list2= new ArrayList<>();
+		List list= new ArrayList<List>();
+		list.add("第一行");
 		list.add("1");
+		list.add("1");
+		
+		list.add("第二行");
 		list.add("2");
-		list.add("3");
-
+		list.add("2");
+		
+		list.add(list1);
+		list.add(list2);
+		writeListMap(list, 0, 1, "F://food.xlsx");
+ 
 	}
 
 }

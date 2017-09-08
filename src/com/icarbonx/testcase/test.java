@@ -1,24 +1,15 @@
 package com.icarbonx.testcase;
 
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.codehaus.jettison.json.JSONObject;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
 import com.icarbonx.api.HttpRequest;
 import com.icarbonx.api.createFood;
-import com.icarbonx.api.foodResult;
+import com.icarbonx.api.foodUtil;
 import com.icarbonx.uitls.ExcelDemo;
 import com.icarbonx.uitls.ExcelInfo;
 import com.icarbonx.uitls.ExcelSheet;
@@ -31,7 +22,7 @@ public class test {
 	String param="app_key=xN12cQL0a6Ui2Aw1az1J&name=";
    
 	//语音输入4种食物组合
-    @Test(enabled=false)
+    @Test
     public void analysisData(){
     	String message=null;
     	String[] friut,drink,meat,stap,veg;
@@ -50,10 +41,11 @@ public class test {
     						message="我今天吃了一个"+friut[k]+"100克"+meat[j]+"一杯"+
     					    drink[i]+"200克"+veg[n]+"150克"+stap[m];
     						System.out.println(message);
-    						foodResult.printFoodresult(message,"");		
+    						foodUtil.printFoodresult(message,"");		
     					}
 
     }
+    
     
     //遍历excel中的食物vvv
     @Test(dataProvider="weightprovider",enabled=false)
@@ -70,7 +62,7 @@ public class test {
     		ExcelInfo rowfood=iterator.next();
     		food=rowfood.getfood();
     		//System.out.println("搜索的食物为:"+food);
-			foodResult.printFoodresult(food,weight);	
+			foodUtil.printFoodresult(food,weight);	
     		
 
     		
@@ -104,13 +96,13 @@ public class test {
     /*
      * 获取食物的营养列表
      */
-    @Test
+    @Test(enabled=false)
     public void getNutritional()
     {   
 
     
     	//获取列的所有值
-    	List<String> foodlist=ExcelSheet.getrankvalue("F://food.xls", 0, 2);
+    	List<String> foodlist=ExcelSheet.getrankvalue("F://food.xls", 0, 0);
     	List<String> nutritiona=new ArrayList<>();
     
     	//营养列表
@@ -124,7 +116,7 @@ public class test {
     		String textresult=analysistext.postRequestContent("name=我中午吃了100克"+foodsigle);
     	
     		///json格式封装后获取id
-        	String id=foodResult.getFoodId(textresult,foodsigle);
+        	String id=foodUtil.getFoodId(textresult,foodsigle);
  
             //获取营养列表
            String str="[{ \"weight\": 100, \"id\":"+id+"}]";
@@ -132,13 +124,13 @@ public class test {
            //获得到的请求结果
            String jsonresult=HttpRequest.doPost(jsonurl, str).toString();
            nutritiona.add(jsonresult);
-           ExcelSheet.writeList("F://food.xls", 0, 2, nutritiona);
+           ExcelSheet.writeList(nutritiona, 0, 2, "F://food.xls");
           
 
     	}
 
 
-    	System.out.println("营养列表长度"+nutritiona.size());
+    	
     	
     	
     }
@@ -146,12 +138,12 @@ public class test {
     /*
      * 获取食物的搜索结果
      */
-    @Test
+    @Test(enabled=false)
     public void getSearchResult()
     {   
     	HttpRequest analysistext=new HttpRequest("http://60.205.107.6/oramirror_cloud/api/analysisData.do?app_key=xN12cQL0a6Ui2Aw1az1J");
        	//获取列的所有值
-    	List<String> foodlist=ExcelSheet.getrankvalue("F://food.xls", 0, 1);
+    	List<String> foodlist=ExcelSheet.getrankvalue("F://food.xls", 0, 0);
     	List<String> searchresult=new ArrayList<>();
     	
     	//遍历所有食物
@@ -163,12 +155,10 @@ public class test {
     	
  
     	    //搜索到的食物名称
-        	String searchname=foodResult.getResponseFood(textresult);
+        	String searchname=foodUtil.getResponseFood(textresult);
             //搜索到的食物名称放入excel表
         	searchresult.add(searchname);
-        	ExcelSheet.writeList("F://food.xls",0, 1, searchresult);
-        	 
-          
+        	ExcelSheet.writeList(searchresult, 0, 1, "F://food.xls");
 
     	}
     	
@@ -178,7 +168,7 @@ public class test {
     @Test(enabled=false)
     public void longAnaly()
     {
-    	foodResult.printFoodresult("我今天苹果、桃子、梨各吃了一个  ","");	
+    	foodUtil.printFoodresult("我今天苹果、桃子、梨各吃了一个  ","");	
     	
     }
     
