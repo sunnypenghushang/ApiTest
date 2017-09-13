@@ -51,6 +51,17 @@ public class testcase {
     }
     
     
+    
+    /*
+     * 获取所有食物的份量
+     */
+     @Test
+     public void test()
+     {   
+
+    	 System.out.println("good");
+ 	
+     }
    /*
     * 获取所有食物的份量
     */
