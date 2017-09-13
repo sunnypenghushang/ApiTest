@@ -15,8 +15,43 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                </configuration>
+                <version>2.20</version>
+                </plugin>
+                
+                <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+
+                    <!--includes标签是指定了任何路径下，任何java类都执行测 试 -->
+                    <excludes>
+                        <exclude>**/*ServiceTest.java</exclude>
+                    </excludes>
+                    <!--excludes标签是指定了任何路径下，以ServiceTest结尾的不执行测试。若一个测试类既在<includes>中，也在<excludes>时，则按这个测试类最终在哪一边来执行， -->
+                </configuration>
+            </plugin>
 		</plugins>
+		
+		    <resources>
+        <resource>
+        <directory>src/config</directory>
+        </resource>
+        </resources>
 	</build>
+	
 
 	<dependencies>
 
