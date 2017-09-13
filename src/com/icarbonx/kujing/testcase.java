@@ -1,4 +1,4 @@
-package com.icarbonx.testcase;
+package com.icarbonx.kujing;
 
 
 
@@ -7,15 +7,16 @@ import java.util.Iterator;
 import java.util.List;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import com.icarbonx.api.HttpRequest;
-import com.icarbonx.api.createFood;
-import com.icarbonx.api.foodUtil;
-import com.icarbonx.uitls.ExcelSheet;
+
+import com.icarbonx.kujing.createFood;
+import com.icarbonx.kujing.foodUtil;
+import com.icarbonx.utils.ExcelSheet;
+import com.icarbonx.utils.HttpRequest;
 
 /*
  * 测试用例集
  */
-public class test {
+public class testcase {
 	String analyUrl="http://123.59.140.18/oramirror_cloud/api/analysisData.do";
 	String param="app_key=xN12cQL0a6Ui2Aw1az1J&name=";
 	//语音输入4种食物组合

@@ -1,4 +1,4 @@
-package com.icarbonx.api;
+package com.icarbonx.kujing;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -8,6 +8,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
+import com.icarbonx.utils.HttpRequest;
 
 /*
  * 获取HTTP请求结果
