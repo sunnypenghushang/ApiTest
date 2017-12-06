@@ -2,12 +2,12 @@
 <testng-results skipped="0" failed="0" ignored="4" total="5" passed="1">
   <reporter-output>
   </reporter-output>
-  <suite name="Suite" duration-ms="17" started-at="2017-09-13T09:12:16Z" finished-at="2017-09-13T09:12:16Z">
+  <suite name="Suite" duration-ms="30" started-at="2017-12-06T08:50:45Z" finished-at="2017-12-06T08:50:45Z">
     <groups>
     </groups>
-    <test name="Test" duration-ms="17" started-at="2017-09-13T09:12:16Z" finished-at="2017-09-13T09:12:16Z">
+    <test name="Test" duration-ms="30" started-at="2017-12-06T08:50:45Z" finished-at="2017-12-06T08:50:45Z">
       <class name="com.icarbonx.kujing.testcase">
-        <test-method status="PASS" signature="test()[pri:0, instance:com.icarbonx.kujing.testcase@7d417077]" name="test" duration-ms="6" started-at="2017-09-13T17:12:16Z" finished-at="2017-09-13T17:12:16Z">
+        <test-method status="PASS" signature="test()[pri:0, instance:com.icarbonx.kujing.testcase@2752f6e2]" name="test" duration-ms="9" started-at="2017-12-06T16:50:45Z" finished-at="2017-12-06T16:50:45Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- test -->
